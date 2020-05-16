@@ -1,15 +1,11 @@
 package com.example.test.flutter_test_embedded_android_view
 
-import android.app.Activity
-import androidx.annotation.NonNull;
-
+import android.util.Log
+import android.view.View
+import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 
 /** FlutterTestEmbeddedAndroidViewPlugin */
@@ -21,13 +17,17 @@ public class FlutterTestEmbeddedAndroidViewPlugin : FlutterPlugin, ActivityAware
     }
 
     companion object {
+        var containerView: View? = null
+
         @JvmStatic
         fun registerWith(registrar: Registrar) {
+            Log.e("aaron", "registerWith")
+            containerView = registrar.view()
             if (registrar.activity() != null) {
                 registrar.platformViewRegistry()
                         .registerViewFactory(
                                 "test_channel",
-                                TestEmbeddedFactory())
+                                TestEmbeddedFactory(containerView))
             }
         }
     }
@@ -40,11 +40,12 @@ public class FlutterTestEmbeddedAndroidViewPlugin : FlutterPlugin, ActivityAware
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        Log.e("aaron", "onAttachedToActivity")
         flutterPluginBinding
                 .platformViewRegistry
                 .registerViewFactory(
                         "test_channel",
-                        TestEmbeddedFactory())
+                        TestEmbeddedFactory(containerView))
     }
 
     override fun onDetachedFromActivity() {
